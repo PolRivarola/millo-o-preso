@@ -1,7 +1,7 @@
-# 🧠 Millo o Pira
+# 🧠 Idea millonaria o Estafa piramidal
 
 ¿Tenés una idea de negocio revolucionaria... o estás a un paso de caer en una estafa piramidal?  
-**Millo o Pira** es una aplicación web que analiza tus ideas con inteligencia artificial y te dice, con humor e ironía, si estás por cambiar el mundo o fundar otro esquema dudoso.
+**Idea millonaria o Estafa piramidal** es una aplicación web que analiza tus ideas con inteligencia artificial y te dice, con humor e ironía, si estás por cambiar el mundo o fundar otro esquema dudoso.
 
 ---
 
