@@ -33,8 +33,12 @@ export default function LoginPage() {
       } else {
         setSent(true)
       }
-    } catch (err: any) {
-      setError(err.message || "Error al enviar el magic link")
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error al enviar el magic link");
+      }
     } finally {
       setIsSubmitting(false)
     }
