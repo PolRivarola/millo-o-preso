@@ -24,7 +24,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `https://millo-o-preso-4x6x5mrub-polrivarolas-projects.vercel.app/auth/callback`,
         },
       })
 
