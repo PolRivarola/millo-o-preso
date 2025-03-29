@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 export default function AuthCallbackPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(true);
+  const [,setIsProcessing] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();

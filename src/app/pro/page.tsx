@@ -83,6 +83,9 @@ export default function ProPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-0 bg-black text-white">
       <div className="w-full max-w-md space-y-6 text-center">
+      <Button variant="ghost" onClick={() => router.back()} className="mb-2 text-gray-400 hover:text-white">
+          ← Volver
+        </Button>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
           💼 Pasate al plan PRO
         </h1>
