@@ -10,29 +10,35 @@ export default function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
   const [,setIsProcessing] = useState(true);
 
+  
   useEffect(() => {
     const supabase = createClient();
-    
+  
     const handleAuthCallback = async () => {
       try {
         setIsProcessing(true);
-        
-        const { error: signInError } = await supabase.auth.getSession();
-        
-        if (signInError) {
-          console.error("Error en la autenticación:", signInError.message);
-          setError(signInError.message);
+  
+        const { data: { session }, error } = await supabase.auth.getSession();
+  
+        if (error) {
+          console.error("Error al obtener sesión:", error.message);
+          setError(error.message);
           setIsProcessing(false);
           return;
         }
-        
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session) {
-          router.push("/app");
+  
+        if (!session) {
+          setTimeout(async () => {
+            const retry = await supabase.auth.getSession();
+            if (retry.data.session) {
+              router.push("/app");
+            } else {
+              setError("No se pudo establecer la sesión");
+              setIsProcessing(false);
+            }
+          }, 1000);
         } else {
-          setError("No se pudo establecer la sesión");
-          setIsProcessing(false);
+          router.push("/app");
         }
       } catch (err) {
         console.error("Error inesperado:", err);
@@ -40,11 +46,10 @@ export default function AuthCallbackPage() {
         setIsProcessing(false);
       }
     };
-
-    if (typeof window !== "undefined") {
-      handleAuthCallback();
-    }
+  
+    handleAuthCallback();
   }, [router]);
+  
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center text-white bg-black p-4">
