@@ -29,3 +29,20 @@
 - [TypeScript](https://www.typescriptlang.org/)
 
 ---
+---
+
+## Enfoque
+
+Se buscó darle una sensación futurista a la pagina, pero que a la vez demuestre elegancia. Una UI simple permite al usuario desplazarse sin problema por las diferentes rutas.
+No se buscó llenar al usuario de informacion. Simplemente presentar lo que el producto pueda hacer de manera rápida y conveniente.
+Se utilizaron diferentes recursos como v0 de vercel y la documentación de Tailwind para alcanzar el estilo deseado de la página. 
+
+---
+
+---
+
+## Problemas presentes
+
+Actualmente los Magic Links de SupaBase son inconsistentes. Para algunos usuarios es necesario enviar este Magic Link una segunda vez para poder ingresar a la plataforma.
+
+---
