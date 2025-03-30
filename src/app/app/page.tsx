@@ -6,6 +6,8 @@ import { useUser } from "@/hooks/useUser";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase"
+
 
 type Response = {
   verdict: string;
@@ -13,53 +15,73 @@ type Response = {
 };
 
 export default function AppPage() {
-  const { user, loading } = useUser();
-  const router = useRouter();
+  const { user, loading, refreshUser } = useUser()
+  const router = useRouter()
+  const supabase = createClient()
 
-  const [idea, setIdea] = useState("");
-  const [response, setResponse] = useState<Response | null>(null);
-  const [canUse, setCanUse] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [idea, setIdea] = useState("")
+  const [response, setResponse] = useState<Response | null>(null)
+  const [canUse, setCanUse] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) return
 
     const checkUsage = () => {
-      const lastUsed = localStorage.getItem("lastIdeaUsed");
-      const today = new Date().toDateString();
+      const lastUsed = user.last_used
+      const today = new Date().toDateString()
 
       if (user.plan === "free" && lastUsed === today) {
-        setCanUse(false);
+        setCanUse(false)
       } else {
-        setCanUse(true);
+        setCanUse(true)
       }
-    };
+    }
 
-    checkUsage();
-  }, [user]);
+    checkUsage()
+  }, [user])
+
 
   const handleSubmit = async () => {
-    if (!idea.trim() || (!canUse && user?.plan === "free")) return;
+    if (!idea.trim() || (!canUse && user?.plan === "free")) return
 
-    setIsSubmitting(true);
-    setResponse(null);
+    setIsSubmitting(true)
+    setResponse(null)
 
-    const res = await fetch("/api/classify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idea }),
-    });
+    try {
+      const res = await fetch("/api/classify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idea }),
+      })
 
-    const data = await res.json();
-    setResponse(data);
-    setIsSubmitting(false);
+      const data = await res.json()
+      setResponse(data)
 
-    if (user?.plan === "free") {
-      const today = new Date().toDateString();
-      localStorage.setItem("lastIdeaUsed", today);
-      setCanUse(false);
+      if (user?.plan === "free") {
+        const today = new Date().toDateString()
+
+        // Update user metadata with last used date
+        const { error } = await supabase.auth.updateUser({
+          data: {
+            last_used: today,
+          },
+        })
+
+        if (error) {
+          console.error("Error updating user metadata:", error)
+        } else {
+          // Refresh user data to get updated metadata
+          refreshUser()
+          setCanUse(false)
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting idea:", error)
+    } finally {
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-4">

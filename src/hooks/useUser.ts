@@ -1,41 +1,91 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { useState, useEffect, useCallback } from "react"
+import { createClient } from "@/lib/supabase"
 
-type UserInfo = {
-  email: string;
-  plan: "free" | "pro";
-};
+type UserData = {
+  id: string
+  email: string
+  plan: string
+  last_used?: string
+  [key: string]: unknown
+}
 
-export function useUser() {
-  const supabase = createClient();
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+export const useUser = () => {
+  const [user, setUser] = useState<UserData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
+  const fetchUserData = useCallback(async () => {
+    try {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession()
 
-      if (error || !data.session?.user) {
-        setUser(null);
-        setLoading(false);
-        return;
+      if (sessionError) {
+        console.error("Error getting session:", sessionError)
+        setUser(null)
+        setLoading(false)
+        return
       }
 
-      const metadata = data.session.user.user_metadata || {};
-      const plan = metadata.plan === "pro" ? "pro" : "free";
+      if (!session) {
+        setUser(null)
+        setLoading(false)
+        return
+      }
+
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+
+      if (userError || !userData.user) {
+        setUser(null)
+        setLoading(false)
+        return
+      }
+
+      // Extract relevant user data including metadata
+      const { id, email, user_metadata } = userData.user
 
       setUser({
-        email: data.session.user.email ?? "",
-        plan,
-      });
+        id,
+        email: email || "",
+        plan: user_metadata?.plan || "free",
+        last_used: user_metadata?.last_used || null,
+        ...user_metadata,
+      })
+    } catch (error) {
+      console.error("Error in fetchUserData:", error)
+      setUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }, [supabase])
 
-      setLoading(false);
-    };
+  // Initial fetch
+  useEffect(() => {
+    fetchUserData()
+  }, [fetchUserData])
 
-    loadUser();
-  }, []);
+  // Set up auth state change listener
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      fetchUserData()
+    })
 
-  return { user, loading };
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [supabase, fetchUserData])
+
+  // Function to manually refresh user data
+  const refreshUser = useCallback(() => {
+    setLoading(true)
+    fetchUserData()
+  }, [fetchUserData])
+
+  return { user, loading, refreshUser }
 }
+
