@@ -44,7 +44,6 @@ export const useUser = () => {
         return
       }
 
-      // Extract relevant user data including metadata
       const { id, email, user_metadata } = userData.user
 
       setUser({
@@ -62,12 +61,10 @@ export const useUser = () => {
     }
   }, [supabase])
 
-  // Initial fetch
   useEffect(() => {
     fetchUserData()
   }, [fetchUserData])
 
-  // Set up auth state change listener
   useEffect(() => {
     const {
       data: { subscription },
@@ -80,7 +77,6 @@ export const useUser = () => {
     }
   }, [supabase, fetchUserData])
 
-  // Function to manually refresh user data
   const refreshUser = useCallback(() => {
     setLoading(true)
     fetchUserData()

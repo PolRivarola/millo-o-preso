@@ -61,7 +61,6 @@ export default function AppPage() {
       if (user?.plan === "free") {
         const today = new Date().toDateString()
 
-        // Update user metadata with last used date
         const { error } = await supabase.auth.updateUser({
           data: {
             last_used: today,
@@ -71,7 +70,6 @@ export default function AppPage() {
         if (error) {
           console.error("Error updating user metadata:", error)
         } else {
-          // Refresh user data to get updated metadata
           refreshUser()
           setCanUse(false)
         }
