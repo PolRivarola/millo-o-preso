@@ -39,10 +39,3 @@ Se utilizaron diferentes recursos como v0 de vercel y la documentación de Tailw
 
 ---
 
----
-
-## Problemas presentes
-
-Actualmente los Magic Links de SupaBase son inconsistentes. Para algunos usuarios es necesario enviar este Magic Link una segunda vez para poder ingresar a la plataforma.
-
----
