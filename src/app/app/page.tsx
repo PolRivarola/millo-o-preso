@@ -166,7 +166,7 @@ export default function AppPage() {
 
         {response && (
           <div className="mt-6 p-6 bg-gray-950 border border-gray-800 rounded-lg">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            <h2 className="text-2xl font-bold text-blue-600 bg-clip-text ">
               {response.verdict}
             </h2>
             <p className="mt-4 text-gray-300">{response.explanation}</p>
